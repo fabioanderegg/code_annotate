@@ -1,0 +1,33 @@
+{% extends "web/base.html" %}
+
+{% block content %}
+
+    <div class="col-sm-12">
+        <table class="table table-stripped">
+        <tr>
+            <td style="width: 28px;"><i class="fa fa-file"></i></td>
+            <td>
+                <a href="{% url 'web:browse' %}?path={{ parent_directory }}">..</a>
+            </td>
+        </tr>
+        {% for directory in directories %}
+            <tr>
+                <td style="width: 28px;"><i class="fa fa-folder"></i></td>
+                <td>
+                    <a href="{% url 'web:browse' %}?path={{ relative_path }}{{ directory }}">{{ directory }}</a>
+                </td>
+            </tr>
+            {% endfor %}
+            {% for file in files %}
+            <tr>
+                <td style="width: 28px;"><i class="fa fa-file"></i></td>
+                <td>
+                   <a href="{% url 'web:annotate' %}?path={{ relative_path }}{{ file }}">{{ file }}</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+
+{% endblock %}

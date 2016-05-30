@@ -9,7 +9,7 @@ admin.autodiscover()
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^', include('apps.web.urls')),
+    url(r'^', include('apps.web.urls', namespace='web')),
 ]
 
 # This is only needed when using runserver.
