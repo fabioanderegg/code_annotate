@@ -1,5 +1,35 @@
 {% extends "web/base.html" %}
 
-{% block content %}
-<h1>Hello World!</h1>
+{% block head %}
+    <style>
+        {{ css }}
+
+        .highlight pre > span {
+            display: block;
+            width: 100%;
+            cursor: default;
+        }
+        .highlight pre > span.marked {
+            background-color: #f8eec7;
+        }
+    </style>
+{% endblock head %}
+
+{% block javascript %}
+    <script type="text/javascript">
+    $(function() {
+        $('.highlight pre > span').click(function() {
+            if ($(this).hasClass('marked')) {
+                $(this).removeClass('marked')
+            } else {
+                $('.highlight pre > span').removeClass('marked');
+                $(this).addClass('marked');
+            }
+        });
+    });
+    </script>
 {% endblock %}
+
+{% block content %}
+    {{ code|safe }}
+{% endblock content %}

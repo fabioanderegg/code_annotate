@@ -6,6 +6,10 @@ from django.http.response import Http404
 from django.shortcuts import redirect
 from django.views.generic import TemplateView
 
+from pygments import highlight
+from pygments.lexers import PythonLexer
+from pygments.formatters import HtmlFormatter
+
 
 class BrowseView(TemplateView):
     template_name = 'web/browse.html'
@@ -56,6 +60,33 @@ class BrowseView(TemplateView):
 class AnnotateView(TemplateView):
     template_name = 'web/annotate.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(AnnotateView, self).get_context_data(**kwargs)
-        return context
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        code_directory = os.path.realpath(settings.CODE_DIRECTORY) + os.path.sep
+        absolute_path = self.request.GET.get('path')
+        if not absolute_path:
+            return redirect(reverse('web:browse') + '?path=/')
+        if not absolute_path.startswith('/'):
+            raise Http404
+        absolute_path = '.' + absolute_path
+        absolute_path = os.path.join(settings.CODE_DIRECTORY, absolute_path)
+        absolute_path = os.path.realpath(absolute_path)
+
+        if not absolute_path.startswith(code_directory):
+            raise Http404
+
+        if not os.path.exists(absolute_path):
+            raise Http404
+
+        if not os.path.isfile(absolute_path):
+            raise Http404
+
+        context['code'] = absolute_path
+
+        with open(absolute_path) as f:
+            code = f.read()
+        code = highlight(code, PythonLexer(), HtmlFormatter(linenos='inline', linespans='line'))
+
+        context['code'] = code
+        context['css'] = HtmlFormatter().get_style_defs('.highlight')
+        return self.render_to_response(context)
