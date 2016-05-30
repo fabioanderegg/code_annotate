@@ -7,8 +7,10 @@ from django.shortcuts import redirect
 from django.views.generic import TemplateView
 
 from pygments import highlight
-from pygments.lexers import PythonLexer
-from pygments.formatters import HtmlFormatter
+from pygments.lexers.python import PythonLexer
+from pygments.formatters.html import HtmlFormatter
+
+from apps.web.models import CodeAnnotation
 
 
 class BrowseView(TemplateView):
@@ -83,10 +85,41 @@ class AnnotateView(TemplateView):
 
         context['code'] = absolute_path
 
+        relative_path = '/' + absolute_path[len(code_directory):]
+
+        annotations = {}
+        for annotation in CodeAnnotation.objects.filter(path=relative_path):
+            annotations[annotation.line_number] = {'user': annotation.user, 'annotation': annotation.annotation}
+
         with open(absolute_path) as f:
             code = f.read()
-        code = highlight(code, PythonLexer(), HtmlFormatter(linenos='inline', linespans='line'))
+
+        code = highlight(code, PythonLexer(), Formatter(annotations=annotations, linenos='inline', linespans='line'))
 
         context['code'] = code
         context['css'] = HtmlFormatter().get_style_defs('.highlight')
         return self.render_to_response(context)
+
+
+class Formatter(HtmlFormatter):
+    def __init__(self, annotations, *args, **kwargs):
+        super(Formatter, self).__init__(*args, **kwargs)
+        self.annotations = annotations
+
+    def _wrap_linespans(self, inner):
+        s = self.linespans
+        i = self.linenostart - 1
+        for t, line in inner:
+            if t:
+                i += 1
+                if i in self.annotations:
+                    annotation = self.annotations[i]
+                    tooltip = '<span data-toggle="tooltip" data-placement="bottom" data-toggle="tooltip" ' + \
+                              'title="{}: {}" class="annotation"><i class="fa fa-comment"> </i> </span>'
+                    tooltip = tooltip.format(annotation['user'].get_full_name(), annotation['annotation'])
+                    yield 1, '<span id="%s-%d">%s%s</span>' % (s, i, tooltip, line)
+                else:
+                    yield 1, '<span id="%s-%d"><span style="width: 20px; display: inline-block"></span>%s</span>' \
+                          % (s, i, line)
+            else:
+                yield 0, line
