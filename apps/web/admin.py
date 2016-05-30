@@ -1,3 +1,5 @@
 from django.contrib import admin
 
-# Register your models here.
+from apps.web.models import CodeAnnotation
+
+admin.site.register(CodeAnnotation)
