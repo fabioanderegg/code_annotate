@@ -154,3 +154,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
+
+
+CODE_DIRECTORY = get_env_variable('CODE_DIRECTORY')
