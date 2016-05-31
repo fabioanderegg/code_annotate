@@ -1,33 +1,36 @@
 {% extends "web/base.html" %}
 
 {% block content %}
-
     <div class="col-sm-12">
         <table class="table table-stripped">
         <tr>
-            <td style="width: 28px; color: #337ab7;"><i class="fa fa-folder"></i></td>
             <td>
-                <a href="{% url 'web:browse' %}?path={{ parent_directory }}">..</a>
+                <a href="{% url 'web:browse' %}?path={{ parent_directory }}">
+                    <i class="fa fa-folder fa-fw"></i>
+                    ..
+                </a>
             </td>
         </tr>
         {% for directory in directories %}
             <tr>
-                <td style="width: 28px; color: #337ab7;"><i class="fa fa-folder"></i></td>
                 <td>
-                    <a href="{% url 'web:browse' %}?path={{ relative_path }}{{ directory }}">{{ directory }}</a>
+                    <a href="{% url 'web:browse' %}?path={{ relative_path }}{{ directory }}">
+                        <i class="fa fa-folder fa-fw"></i>
+                        {{ directory }}
+                    </a>
                 </td>
             </tr>
             {% endfor %}
             {% for file in files %}
             <tr>
-                <td style="width: 28px;"><i class="fa fa-file"></i></td>
                 <td>
-                   <a href="{% url 'web:annotate' %}?path={{ relative_path }}{{ file }}">{{ file }}</a>
+                   <a href="{% url 'web:annotate' %}?path={{ relative_path }}{{ file }}">
+                       <i class="fa fa-file fa-fw" style="color: #000000;"></i>
+                       {{ file }}
+                   </a>
                 </td>
             </tr>
             {% endfor %}
         </table>
     </div>
-
-
 {% endblock %}
