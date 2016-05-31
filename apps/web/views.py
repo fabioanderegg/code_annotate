@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.http.response import Http404
 from django.shortcuts import redirect
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, CreateView
 
 from pygments import highlight
 from pygments.lexers.python import PythonLexer
@@ -102,6 +102,7 @@ class AnnotateView(TemplateView):
 
         context['code'] = code
         context['css'] = HtmlFormatter().get_style_defs('.highlight')
+        context['relative_path'] = relative_path
         return self.render_to_response(context)
 
 
@@ -127,3 +128,17 @@ class Formatter(HtmlFormatter):
                           % (s, i, line)
             else:
                 yield 0, line
+
+
+class SubmitView(CreateView):
+    model = CodeAnnotation
+    fields = ('annotation', 'line_number', 'path')
+
+    def form_valid(self, form):
+        annotation = form.save(commit=False)
+        annotation.user = self.request.user
+        annotation.save()
+        # TODO redirect
+
+    def form_invalid(self, form):
+        print(form.errors)

@@ -5,4 +5,5 @@ from . import views
 urlpatterns = [
     url('^browse/$', views.BrowseView.as_view(), name='browse'),
     url('^annotate/$', views.AnnotateView.as_view(), name='annotate'),
+    url('^submit/$', views.SubmitView.as_view(), name='submit'),
 ]
