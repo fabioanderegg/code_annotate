@@ -5,14 +5,14 @@
     <div class="col-sm-12">
         <table class="table table-stripped">
         <tr>
-            <td style="width: 28px;"><i class="fa fa-file"></i></td>
+            <td style="width: 28px; color: #337ab7;"><i class="fa fa-folder"></i></td>
             <td>
                 <a href="{% url 'web:browse' %}?path={{ parent_directory }}">..</a>
             </td>
         </tr>
         {% for directory in directories %}
             <tr>
-                <td style="width: 28px;"><i class="fa fa-folder"></i></td>
+                <td style="width: 28px; color: #337ab7;"><i class="fa fa-folder"></i></td>
                 <td>
                     <a href="{% url 'web:browse' %}?path={{ relative_path }}{{ directory }}">{{ directory }}</a>
                 </td>
