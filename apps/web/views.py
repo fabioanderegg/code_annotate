@@ -138,7 +138,7 @@ class SubmitView(CreateView):
         annotation = form.save(commit=False)
         annotation.user = self.request.user
         annotation.save()
-        # TODO redirect
+        return redirect('{}?path={}#line-{}'.format(reverse('web:annotate'), annotation.path, annotation.line_number))
 
     def form_invalid(self, form):
         print(form.errors)
