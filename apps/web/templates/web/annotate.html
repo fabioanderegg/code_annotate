@@ -52,10 +52,10 @@
         <div id="annotation-form">
         <form action="{% url 'web:submit' %}" method="post">
             {% csrf_token %}
-            <textarea name="annotation"></textarea><br>
+            <textarea name="annotation" autocomplete="off" class="form-control form-group"></textarea>
+            <input type="submit" value="{% trans "Save" %}" class="btn btn-default pull-right">
             <input type="hidden" value="{{ relative_path }}" name="path">
             <input type="hidden" value="" name="line_number">
-            <input type="submit" value="{% trans "Save" %}">
         </form>
         </div>
         {% endif %}
