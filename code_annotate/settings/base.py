@@ -159,3 +159,7 @@ MIDDLEWARE_CLASSES = (
 
 
 CODE_DIRECTORY = get_env_variable('CODE_DIRECTORY')
+FILE_EXCLUDE_PATTERNS = (
+    '*.pyc',
+    '__pycache__',
+)

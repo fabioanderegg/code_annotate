@@ -1,4 +1,5 @@
 import os
+from fnmatch import fnmatch
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -45,6 +46,9 @@ class BrowseView(TemplateView):
         directories = []
         files = []
         everything = os.listdir(absolute_path)
+
+        everything = (n for n in everything if not any(fnmatch(n, ignore) for ignore in settings.FILE_EXCLUDE_PATTERNS))
+
         for f in everything:
             path = os.path.join(absolute_path, f)
             if os.path.isdir(path):
