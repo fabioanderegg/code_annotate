@@ -19,12 +19,10 @@ from apps.web.models import CodeAnnotation
 
 class BaseView(TemplateView):
     def get_breadcrumbs(self, path):
-        assert path[0] == '/'
-        assert path[-1] == '/'
         breadcrumbs = [{'path': '/', 'name': 'Root'}]
-        if path != '/':
+        if path != '':
             current_path = ''
-            for split in path[1:-1].split('/'):
+            for split in path[1:].split('/'):
                 current_path += '/' + split
                 breadcrumbs.append({'path': current_path, 'name': split})
         return breadcrumbs
@@ -55,7 +53,7 @@ class BrowseView(BaseView):
             raise Http404
 
         relative_path = '/' + absolute_path[len(code_directory):]
-        breadcrumbs = self.get_breadcrumbs(relative_path)
+        breadcrumbs = self.get_breadcrumbs(relative_path[:-1])
 
         parent_directory = os.path.realpath(os.path.join(absolute_path, os.path.pardir)) + os.path.sep
         parent_directory = '/' + parent_directory[len(code_directory):]
