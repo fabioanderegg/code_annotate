@@ -9,8 +9,10 @@ from django.shortcuts import redirect
 from django.views.generic import TemplateView, CreateView
 
 from pygments import highlight
-from pygments.lexers.python import PythonLexer
+from pygments.lexers import get_lexer_for_filename
 from pygments.formatters.html import HtmlFormatter
+from pygments.lexers.special import TextLexer
+from pygments.util import ClassNotFound
 
 from apps.web.models import CodeAnnotation
 
@@ -110,7 +112,11 @@ class AnnotateView(TemplateView):
         with open(absolute_path) as f:
             code = f.read()
 
-        code = highlight(code, PythonLexer(), Formatter(annotations=annotations, linenos='inline', linespans='line'))
+        try:
+            lexer = get_lexer_for_filename(absolute_path)
+        except ClassNotFound:
+            lexer = TextLexer()
+        code = highlight(code, lexer, Formatter(annotations=annotations, linenos='inline', linespans='line'))
 
         context['code'] = code
         context['css'] = HtmlFormatter().get_style_defs('.highlight')
