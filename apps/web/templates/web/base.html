@@ -25,16 +25,16 @@
             <div class="col-sm-12">
                 <ol class="breadcrumb">
                 {% for breadcrumb in breadcrumbs %}
-                    {% if not breadcrumb %}
+                    {% if not breadcrumb.name %}
                         {% if relative_path == '/' %}
                             <li class="active">{% trans "Root" %}</li>
                         {% else %}
                             <li><a href="{% url 'web:browse' %}?path=/">{% trans "Root" %}</a></li>
                         {% endif %}
                     {% elif forloop.last %}
-                        <li class="active">{{ breadcrumb }}</li>
+                        <li class="active">{{ breadcrumb.name }}</li>
                     {% else %}
-                        <li><a href="{% url 'web:browse' %}?path=/">{{ breadcrumb }}</a></li>
+                        <li><a href="{% url 'web:browse' %}?path={{ breadcrumb.path }}">{{ breadcrumb.name }}</a></li>
                     {% endif %}
                 {% endfor %}
                 </ol>

@@ -17,7 +17,20 @@ from pygments.util import ClassNotFound
 from apps.web.models import CodeAnnotation
 
 
-class BrowseView(TemplateView):
+class BaseView(TemplateView):
+    def get_breadcrumbs(self, path):
+        assert path[0] == '/'
+        assert path[-1] == '/'
+        breadcrumbs = [{'path': '/', 'name': 'Root'}]
+        if path != '/':
+            current_path = ''
+            for split in path[1:-1].split('/'):
+                current_path += '/' + split
+                breadcrumbs.append({'path': current_path, 'name': split})
+        return breadcrumbs
+
+
+class BrowseView(BaseView):
     template_name = 'web/browse.html'
 
     def get(self, request, *args, **kwargs):
@@ -42,7 +55,7 @@ class BrowseView(TemplateView):
             raise Http404
 
         relative_path = '/' + absolute_path[len(code_directory):]
-        breadcrumbs = relative_path.split('/')[:-1]
+        breadcrumbs = self.get_breadcrumbs(relative_path)
 
         parent_directory = os.path.realpath(os.path.join(absolute_path, os.path.pardir)) + os.path.sep
         parent_directory = '/' + parent_directory[len(code_directory):]
@@ -81,7 +94,7 @@ class BrowseView(TemplateView):
         return files, directories
 
 
-class AnnotateView(TemplateView):
+class AnnotateView(BaseView):
     template_name = 'web/annotate.html'
 
     def get(self, request, *args, **kwargs):
@@ -106,7 +119,7 @@ class AnnotateView(TemplateView):
             raise Http404
 
         relative_path = '/' + absolute_path[len(code_directory):]
-        breadcrumbs = relative_path.split('/')
+        breadcrumbs = self.get_breadcrumbs(relative_path)
 
         annotations = {}
         for annotation in CodeAnnotation.objects.filter(path=relative_path):
