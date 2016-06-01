@@ -42,16 +42,20 @@ class BrowseView(TemplateView):
             raise Http404
 
         relative_path = '/' + absolute_path[len(code_directory):]
+        breadcrumbs = relative_path.split('/')[:-1]
 
         parent_directory = os.path.realpath(os.path.join(absolute_path, os.path.pardir)) + os.path.sep
         parent_directory = '/' + parent_directory[len(code_directory):]
 
         files, directories = self.get_files_directories(absolute_path, relative_path)
 
-        context['files'] = files
-        context['directories'] = directories
-        context['relative_path'] = relative_path
-        context['parent_directory'] = parent_directory
+        context.update({
+            'files': files,
+            'directories': directories,
+            'relative_path': relative_path,
+            'parent_directory': parent_directory,
+            'breadcrumbs': breadcrumbs,
+        })
         return self.render_to_response(context)
 
     def get_files_directories(self, absolute_path, relative_path):
@@ -101,9 +105,8 @@ class AnnotateView(TemplateView):
         if not os.path.isfile(absolute_path):
             raise Http404
 
-        context['code'] = absolute_path
-
         relative_path = '/' + absolute_path[len(code_directory):]
+        breadcrumbs = relative_path.split('/')
 
         annotations = {}
         for annotation in CodeAnnotation.objects.filter(path=relative_path):
@@ -118,9 +121,12 @@ class AnnotateView(TemplateView):
             lexer = TextLexer()
         code = highlight(code, lexer, Formatter(annotations=annotations, linenos='inline', linespans='line'))
 
-        context['code'] = code
-        context['css'] = HtmlFormatter().get_style_defs('.highlight')
-        context['relative_path'] = relative_path
+        context.update({
+            'code': code,
+            'css': HtmlFormatter().get_style_defs('.highlight'),
+            'relative_path': relative_path,
+            'breadcrumbs': breadcrumbs,
+        })
         return self.render_to_response(context)
 
 
