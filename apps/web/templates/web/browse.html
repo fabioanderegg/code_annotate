@@ -6,6 +6,7 @@
         <tr>
             <td>
                 <a href="{% url 'web:browse' %}?path={{ parent_directory }}">
+                    <i class="fa fa-fw"></i>
                     <i class="fa fa-folder fa-fw"></i>
                     ..
                 </a>
@@ -14,9 +15,14 @@
         {% for directory in directories %}
             <tr>
                 <td>
-                    <a href="{% url 'web:browse' %}?path={{ relative_path }}{{ directory }}">
+                    {% if directory.has_annotations %}
+                        <i class="fa fa-comment fa-fw"></i>
+                    {% else %}
+                        <i class="fa fa-fw"></i>
+                    {% endif %}
+                    <a href="{% url 'web:browse' %}?path={{ relative_path }}{{ directory.directory }}">
                         <i class="fa fa-folder fa-fw"></i>
-                        {{ directory }}
+                        {{ directory.directory }}
                     </a>
                 </td>
             </tr>
@@ -24,10 +30,15 @@
             {% for file in files %}
             <tr>
                 <td>
-                   <a href="{% url 'web:annotate' %}?path={{ relative_path }}{{ file }}">
-                       <i class="fa fa-file fa-fw" style="color: #000000;"></i>
-                       {{ file }}
-                   </a>
+                    {% if file.has_annotations %}
+                        <i class="fa fa-comment fa-fw"></i>
+                    {% else %}
+                        <i class="fa fa-fw"></i>
+                    {% endif %}
+                    <a href="{% url 'web:annotate' %}?path={{ relative_path }}{{ file.file }}">
+                        <i class="fa fa-file fa-fw" style="color: #000000;"></i>
+                        {{ file.file }}
+                    </a>
                 </td>
             </tr>
             {% endfor %}
