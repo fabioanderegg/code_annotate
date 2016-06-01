@@ -154,7 +154,7 @@ class Formatter(HtmlFormatter):
                 i += 1
                 if i in self.annotations:
                     annotation = self.annotations[i]
-                    tooltip = '<span data-toggle="tooltip" data-placement="bottom" data-toggle="tooltip" ' + \
+                    tooltip = '<span data-toggle="tooltip" data-placement="left" data-toggle="tooltip" ' + \
                               'title="{}: {}" class="annotation"><i class="fa fa-comment fa-fw"> </i> </span>'
                     tooltip = tooltip.format(annotation['user'].get_full_name(), annotation['annotation'])
                     yield 1, '<span id="%s-%d">%s%s</span>' % (s, i, tooltip, line)
