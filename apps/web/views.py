@@ -119,8 +119,8 @@ class AnnotateView(TemplateView):
 
 
 class Formatter(HtmlFormatter):
-    def __init__(self, annotations, *args, **kwargs):
-        super(Formatter, self).__init__(*args, **kwargs)
+    def __init__(self, annotations, **options):
+        super(Formatter, self).__init__(**options)
         self.annotations = annotations
 
     def _wrap_linespans(self, inner):
