@@ -44,7 +44,7 @@ class BrowseView(TemplateView):
         parent_directory = os.path.realpath(os.path.join(absolute_path, os.path.pardir)) + os.path.sep
         parent_directory = '/' + parent_directory[len(code_directory):]
 
-        files, directories = self.get_files_directories(absolute_path)
+        files, directories = self.get_files_directories(absolute_path, relative_path)
 
         context['files'] = files
         context['directories'] = directories
@@ -52,19 +52,23 @@ class BrowseView(TemplateView):
         context['parent_directory'] = parent_directory
         return self.render_to_response(context)
 
-    def get_files_directories(self, absolute_path):
+    def get_files_directories(self, absolute_path, relative_path):
         directories = []
         files = []
-        everything = os.listdir(absolute_path)
 
+        annotations = set(CodeAnnotation.objects.values_list('path', flat=True).distinct())
+
+        everything = os.listdir(absolute_path)
         everything = (n for n in everything if not any(fnmatch(n, ignore) for ignore in settings.FILE_EXCLUDE_PATTERNS))
 
         for f in everything:
             path = os.path.join(absolute_path, f)
+            rel_path = relative_path + f
             if os.path.isdir(path):
-                directories.append({'directory': f, 'has_annotations': True})
+                has_annotations = any(annotation.startswith(rel_path) for annotation in annotations)
+                directories.append({'directory': f, 'has_annotations': has_annotations})
             else:
-                files.append({'file': f, 'has_annotations': True})
+                files.append({'file': f, 'has_annotations': rel_path in annotations})
 
         files = sorted(files, key=itemgetter('file'))
         directories = sorted(directories, key=itemgetter('directory'))
