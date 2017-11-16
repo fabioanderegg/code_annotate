@@ -1,0 +1,9 @@
+A simple code annotation tool to review code when you do not have a pull request.
+
+To use do the following:
+* Create a virtualenv and install the dependencies in requirements/base.txt.
+* Create a file named DATABASE_URL in the envir/ directory with the following content: `sqlite://./db.sqlite3`
+* Create a file named CODE_DIRECTORY in the envdir/ directory with the path to the code to be reviewed.
+* Create a admin account with `./manage createsuperuser`
+
+License: MIT
